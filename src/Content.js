@@ -230,23 +230,23 @@ export const content = {
 		subtitle: "GET IN TOUCH",
 		social_media: [
 			{
-				text: "muhammadahmad742@gmail.com",
+				text: "tahacodes1@gmail.com",
 				icon: GrMail,
 				link: "mailto:codeaprogram@gmail.com"
 			},
 			{
-				text: "+92 3115548 133",
+				text: "+92 3075945436",
 				icon: MdCall,
 				link: "https://wa.me/1234567890"
 			},
 			{
 				text: "Muhammad Taha",
 				icon: BsLinkedin,
-				link: "https://www.linkedin.com/in/muhammad-ahmad-492517170/"
+				link: "https://www.linkedin.com/in/muhammad-taha-0487301a1/"
 			}
 		]
 	},
 	Footer: {
-		text: "All © Copy Right Reserved 2022"
+		text: "All © Copy Right Reserved 2025"
 	}
 };
