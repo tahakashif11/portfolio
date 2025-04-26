@@ -23,7 +23,7 @@ const Hireme = () => {
 						<br />
 						<button className="btn bg-dark_primary text-white">
 							<a
-								href="https://www.linkedin.com/in/muhammad-ahmad-492517170/"
+								href="https://www.linkedin.com/in/muhammad-taha-0487301a1/"
 								target="_blank"
 							>
 								{Hireme.btnText}
