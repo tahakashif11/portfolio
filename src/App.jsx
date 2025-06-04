@@ -7,6 +7,7 @@ import Testimonials from "./components/Testimonials";
 import Hireme from "./components/Hireme";
 import Contact from "./components/Contact";
 import Chatbot from "./components/Chatbot";
+import ThemeToggle from "./components/ThemeToggle";
 import { useEffect } from "react";
 import Aos from "aos";
 import "aos/dist/aos.css";
@@ -20,7 +21,8 @@ const App = () => {
 		});
 	}, []);
 	return (
-		<div className="">
+		<div className="transition-colors duration-200">
+			<ThemeToggle />
 			<Navbar />
 			<Hero />
 			<Skills />

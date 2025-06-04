@@ -10,7 +10,7 @@ import tailwind from "./assets/images/Skills/tailwind.png";
 import next from "./assets/images/Skills/next.png";
 import bi from "./assets/images/Skills/bi.png";
 
-import services_logo1 from "./assets/images/Services/logo1.png";
+import services_logo1 from "./assets/images/Services/mobile.svg";
 import services_logo2 from "./assets/images/Services/webapp.png";
 import services_logo3 from "./assets/images/Services/medtech.png";
 
@@ -61,15 +61,15 @@ export const content = {
 		}
 	],
 	hero: {
-		title: "Web Developer",
+		title: "Software engineer",
 		firstName: "Muhammad",
 		LastName: "Taha",
 		btnText: "Hire Me",
 		image: Hero_person,
 		hero_content: [
 			{
-				count: "2+",
-				text: "Years of Experience in Web development"
+				count: "3+",
+				text: "Years of Experience in Web and mobile development"
 			},
 			{
 				count: "20+",
@@ -83,43 +83,34 @@ export const content = {
 		skills_content: [
 			{
 				name: "React js",
-				// para: "To build dynamic and responsive user interfaces",
 				logo: reactjs
 			},
 			{
 				name: "HTML",
-				// para: "To structure and style web applications.",
 				logo: html
 			},
-			{
-				name: "Node js",
-				// para: "Lorem ipsum text  dummy",
-				logo: nodejs
-			},
+			// {
+			// 	name: "Node js",
+			// 	logo: nodejs
+			// },
 			{
 				name: "Javascript",
-				// para: "To build scalable applications with robust logic and strong type safety.",
 				logo: js
 			},
-
 			{
 				name: "Redux",
-				// para: "To manage state efficiently, enabling seamless data handling and storage.",
 				logo: redux
 			},
 			{
 				name: "Tailwind CSS",
-				// para: "To speed up UI development and maintain a clean, modern aesthetic.",
 				logo: tailwind
 			},
 			{
 				name: "Next js",
-				// para: "Lorem ipsum text  dummy",
 				logo: next
 			},
 			{
 				name: "Power BI",
-				// para: "Lorem ipsum text  dummy",
 				logo: bi
 			}
 		],
@@ -130,8 +121,8 @@ export const content = {
 		subtitle: "WHAT I OFFER",
 		service_content: [
 			{
-				title: "Website Development",
-				para: "Creating visually appealing and responsive websites tailored to businesses and individuals. Focuses on user experience, performance, and SEO optimization to ensure an engaging online presence.",
+				title: "Hybrid Mobile Development",
+				para: "Building cross-platform mobile applications using React Native and modern frameworks. Delivering native-like performance, beautiful UI/UX, and seamless functionality across iOS and Android platforms.",
 				logo: services_logo1
 			},
 			{
@@ -184,7 +175,8 @@ export const content = {
 				link: "https://dev-carecopilot.31g.co.uk/auth/login",
 				descriptions:
 					"A SaaS application that acts as a service to access three different application using SSO. Allows creating and editing roles and their access controls dynamically. "
-			}
+			},
+			
 		]
 	},
 	Testimonials: {
@@ -193,25 +185,25 @@ export const content = {
 		testimonials_content: [
 			{
 				review:
-					"“Working with Muhammad Taha and his team was a game-changer for our business. They built our web app using Next.js, making it super fast and SEO-friendly. The user experience is smooth, and our customers love it!”",
+					"Working with Muhammad Taha and his team was a game-changer for our business. They built our web app using Next.js, making it super fast and SEO-friendly. The user experience is smooth, and our customers love it!",
 				img: avatar1,
 				name: "Logan James"
 			},
 			{
 				review:
-					"“Our online store was struggling with performance issues, but Muhammad Taha and his team optimized everything with React and Next.js. Now, our site loads instantly, and conversions have increased by 40%! Truly a top-tier developer”",
+					"Our online store was struggling with performance issues, but Muhammad Taha and his team optimized everything with React and Next.js. Now, our site loads instantly, and conversions have increased by 40%! Truly a top-tier developer",
 				img: avatar2,
 				name: "Salman Mehdi"
 			},
 			{
 				review:
-					"“Our medtech platform required a complex web app, and Muhammad Taha and his team nailed it. They built a fast, secure, and user-friendly solution with Next.js. Their problem-solving skills and professionalism were impressive!”",
+					"Our medtech platform required a complex web app, and Muhammad Taha and his team nailed it. They built a fast, secure, and user-friendly solution with Next.js. Their problem-solving skills and professionalism were impressive!",
 				img: avatar3,
 				name: "Pyramid Pharmacy"
 			},
 			{
 				review:
-					"“We needed a scalable dashboard for our SaaS product, and Muhammad Taha and his team delivered beyond expectations. The React-based UI is sleek, responsive, and easy to use. Highly recommend their expertise!”",
+					"We needed a scalable dashboard for our SaaS product, and Muhammad Taha and his team delivered beyond expectations. The React-based UI is sleek, responsive, and easy to use. Highly recommend their expertise!",
 				img: avatar4,
 				name: "Strategic Innovative Engineering"
 			}
@@ -222,7 +214,7 @@ export const content = {
 		subtitle: "FOR YOUR PROJECTS",
 		image1: Hireme_person,
 		image2: Hireme_person2,
-		para: "With expertise in React.js, Redux, and Power BI, I specialize in building scalable web applications and MedTech solutions. My experience includes developing healthcare platforms, BI tools, and FinTech applications, ensuring seamless user experiences and efficient data visualization. Having worked with 31Green Ltd. and Shifa International Hospital, I excel at creating user-centric, high-performance applications that integrate with complex systems like the UK’s NHS. As a team leader and problem-solver, I bring technical proficiency, adaptability, and a results-driven approach, making me the ideal choice for businesses seeking innovative, high-quality web solutions.",
+		para: "With expertise in React.js, Redux, and Power BI, I specialize in building scalable web applications and MedTech solutions. My experience includes developing healthcare platforms, BI tools, and FinTech applications, ensuring seamless user experiences and efficient data visualization. Having worked with 31Green Ltd. and Shifa International Hospital, I excel at creating user-centric, high-performance applications that integrate with complex systems like the UK's NHS. As a team leader and problem-solver, I bring technical proficiency, adaptability, and a results-driven approach, making me the ideal choice for businesses seeking innovative, high-quality web solutions.",
 		btnText: "Hire Me"
 	},
 	Contact: {

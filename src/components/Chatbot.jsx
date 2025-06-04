@@ -1,146 +1,180 @@
-import React, { useState, useRef } from 'react';
-import styled, { keyframes } from 'styled-components';
+import { useState, useRef, useEffect } from 'react';
+import styled from 'styled-components';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaRobot, FaTimes, FaPaperPlane } from 'react-icons/fa';
+import AnnouncementModal from './AnnouncementModal';
 
-const fadeIn = keyframes`
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-`;
-
-const bounceIn = keyframes`
-  0% { transform: scale(0.3); opacity: 0; }
-  50% { transform: scale(1.05); opacity: 0.8; }
-  70% { transform: scale(0.9); opacity: 0.9; }
-  100% { transform: scale(1); opacity: 1; }
-`;
-
-const ChatContainer = styled.div`
+const ChatbotContainer = styled(motion.div)`
   position: fixed;
   bottom: 20px;
   right: 20px;
   z-index: 1000;
-
-  @media (max-width: 768px) {
-    bottom: 10px;
-    right: 10px;
-  }
 `;
 
-const ChatButton = styled.button`
-  background-color: #4F46E5;
-  color: white;
-  border: none;
-  border-radius: 50%;
+const ChatButton = styled(motion.button)`
   width: 60px;
   height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #67e8f9 0%, #0891b2 100%);
+  border: none;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: transform 0.2s;
-  animation: ${bounceIn} 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  color: #0f172a;
+  box-shadow: 0 0 20px rgba(103, 232, 249, 0.3);
+  position: relative;
+  overflow: hidden;
 
-  &:hover {
-    transform: scale(1.1);
-    background-color: #4338CA;
+  &:before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(270deg, #67e8f9, #0891b2, #67e8f9);
+    background-size: 200% 200%;
+    animation: glow 3s linear infinite;
+    border-radius: 50%;
+    z-index: -1;
   }
 
-  @media (max-width: 768px) {
-    width: 50px;
-    height: 50px;
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(103, 232, 249, 0.4);
+  }
+
+  @keyframes glow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
   }
 `;
 
-const ChatWindow = styled.div`
+const ChatWindow = styled(motion.div)`
   position: absolute;
   bottom: 80px;
   right: 0;
   width: 350px;
   height: 500px;
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
-  overflow: hidden;
-  animation: ${fadeIn} 0.3s ease-out;
+  background: linear-gradient(165deg, rgba(30, 30, 50, 0.95) 0%, rgba(15, 15, 35, 0.95) 100%);
+  border-radius: 24px;
+  box-shadow: 0 0 40px rgba(103, 232, 249, 0.1),
+              inset 0 0 20px rgba(103, 232, 249, 0.05);
+  border: 1px solid rgba(103, 232, 249, 0.1);
+  backdrop-filter: blur(10px);
   display: flex;
   flex-direction: column;
-
-  @media (max-width: 768px) {
-    width: calc(100vw - 20px);
-    height: calc(100vh - 100px);
-    position: fixed;
-    left: 10px;
-    right: 10px;
-    bottom: 80px;
-  }
-
-  @media (max-width: 480px) {
-    bottom: 70px;
-  }
+  overflow: hidden;
 `;
 
 const ChatHeader = styled.div`
-  background-color: #4F46E5;
-  color: white;
-  padding: 16px;
-  font-weight: 600;
+  padding: 20px;
+  background: linear-gradient(135deg, #67e8f9 0%, #0891b2 100%);
+  color: #0f172a;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+
+  h3 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  button {
+    background: none;
+    border: none;
+    color: #0f172a;
+    cursor: pointer;
+    padding: 5px;
+    transition: all 0.2s;
+    
+    &:hover {
+      transform: rotate(90deg);
+    }
+  }
 `;
 
 const ChatMessages = styled.div`
   flex: 1;
   overflow-y: auto;
-  padding: 16px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 15px;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(103, 232, 249, 0.1);
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(103, 232, 249, 0.3);
+    border-radius: 3px;
+    
+    &:hover {
+      background: rgba(103, 232, 249, 0.5);
+    }
+  }
 `;
 
-const Message = styled.div`
+const Message = styled(motion.div)`
   max-width: 80%;
   padding: 12px 16px;
-  border-radius: 16px;
-  margin: ${props => props.isUser ? '0 0 0 auto' : '0'};
-  background-color: ${props => props.isUser ? '#E5E7EB' : '#4F46E5'};
-  color: ${props => props.isUser ? '#1F2937' : 'white'};
-  animation: ${fadeIn} 0.3s ease-out;
+  border-radius: 15px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  
+  ${props => props.isUser ? `
+    align-self: flex-end;
+    background: linear-gradient(135deg, #67e8f9 0%, #0891b2 100%);
+    color: #0f172a;
+    border-bottom-right-radius: 5px;
+    box-shadow: 0 4px 15px rgba(103, 232, 249, 0.2);
+  ` : `
+    align-self: flex-start;
+    background: rgba(103, 232, 249, 0.1);
+    color: #e0f2fe;
+    border-bottom-left-radius: 5px;
+    border: 1px solid rgba(103, 232, 249, 0.2);
+  `}
 `;
 
-const InputContainer = styled.div`
-  padding: 16px;
-  border-top: 1px solid #E5E7EB;
+const InputArea = styled.form`
+  padding: 20px;
+  border-top: 1px solid rgba(103, 232, 249, 0.2);
   display: flex;
-  gap: 8px;
-
-  @media (max-width: 768px) {
-    padding: 12px;
-    background-color: white;
-  }
+  gap: 10px;
+  background: rgba(15, 15, 35, 0.5);
 `;
 
 const Input = styled.input`
   flex: 1;
   padding: 12px;
-  border: 1px solid #E5E7EB;
-  border-radius: 24px;
+  border: 1px solid rgba(103, 232, 249, 0.2);
+  border-radius: 25px;
   outline: none;
-  font-size: 14px;
+  font-size: 0.9rem;
+  background: rgba(103, 232, 249, 0.1);
+  color: #e0f2fe;
+  transition: all 0.3s;
 
-  &:focus {
-    border-color: #4F46E5;
+  &::placeholder {
+    color: rgba(224, 242, 254, 0.5);
   }
 
-  @media (max-width: 768px) {
-    font-size: 16px; /* Prevents zoom on mobile */
-    padding: 10px;
+  &:focus {
+    border-color: #67e8f9;
+    box-shadow: 0 0 15px rgba(103, 232, 249, 0.2);
   }
 `;
 
 const SendButton = styled.button`
-  background-color: #4F46E5;
-  color: white;
+  background: linear-gradient(135deg, #67e8f9 0%, #0891b2 100%);
+  color: #0f172a;
   border: none;
   border-radius: 50%;
   width: 40px;
@@ -149,153 +183,240 @@ const SendButton = styled.button`
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+
+  &:before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(270deg, #67e8f9, #0891b2, #67e8f9);
+    background-size: 200% 200%;
+    animation: glow 3s linear infinite;
+    border-radius: 50%;
+    z-index: -1;
+  }
 
   &:hover {
-    background-color: #4338CA;
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(103, 232, 249, 0.3);
   }
 
   &:disabled {
-    background-color: #E5E7EB;
+    background: rgba(103, 232, 249, 0.3);
     cursor: not-allowed;
-  }
-
-  @media (max-width: 768px) {
-    width: 36px;
-    height: 36px;
+    
+    &:before {
+      display: none;
+    }
   }
 `;
 
-const ChatbotComponent = () => {
+const TypingIndicator = styled(motion.div)`
+  display: flex;
+  gap: 5px;
+  padding: 12px 16px;
+  background: rgba(103, 232, 249, 0.1);
+  border: 1px solid rgba(103, 232, 249, 0.2);
+  border-radius: 15px;
+  align-self: flex-start;
+  width: fit-content;
+
+  span {
+    width: 8px;
+    height: 8px;
+    background: #67e8f9;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(103, 232, 249, 0.5);
+  }
+`;
+
+const initialMessages = [
+  {
+    text: "Hi! I'm Muhammad Taha's AI assistant. I can tell you about his skills, experience, and projects. What would you like to know?",
+    isUser: false
+  }
+];
+
+const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState([
-    { text: "👋 Hi there! I'm your friendly portfolio assistant!", isUser: false },
-    { text: "How can I help you today?", isUser: false }
-  ]);
+  const [messages, setMessages] = useState(initialMessages);
   const [inputValue, setInputValue] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  const [showAnnouncement, setShowAnnouncement] = useState(false);
   const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    // Check if this is the first visit
+    const hasSeenAnnouncement = localStorage.getItem('hasSeenChatbotAnnouncement');
+    if (!hasSeenAnnouncement) {
+      // Wait a bit before showing the announcement
+      const timer = setTimeout(() => {
+        setShowAnnouncement(true);
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  const handleCloseAnnouncement = () => {
+    setShowAnnouncement(false);
+    localStorage.setItem('hasSeenChatbotAnnouncement', 'true');
+  };
+
+  const handleTryIt = () => {
+    handleCloseAnnouncement();
+    setIsOpen(true);
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const handleSendMessage = () => {
-    if (!inputValue.trim()) return;
-
-    // Add user message
-    setMessages(prev => [...prev, { text: inputValue, isUser: true }]);
-    
-    // Simulate bot response
-    setTimeout(() => {
-      const response = getBotResponse(inputValue);
-      setMessages(prev => [...prev, { text: response, isUser: false }]);
-    }, 500);
-
-    setInputValue('');
-  };
-
-  const getBotResponse = (message) => {
-    const lowerMessage = message.toLowerCase();
-    
-    if (lowerMessage.includes('skill') || lowerMessage.includes('do')) {
-      return "I specialize in full-stack development with React, Node.js, and modern web technologies! What would you like to know more about?";
-    }
-    if (lowerMessage.includes('project') || lowerMessage.includes('work')) {
-      return "I've worked on various exciting projects including e-commerce platforms, mobile apps, and web applications!";
-    }
-    if (lowerMessage.includes('contact') || lowerMessage.includes('email')) {
-      return "You can reach me through email at your.email@example.com or connect on LinkedIn!";
-    }
-    return "Thanks for your message! Feel free to ask about my skills, projects, or how to get in touch!";
-  };
-
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      handleSendMessage();
-    }
-  };
-
-  React.useEffect(() => {
+  useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
+  const generateAIResponse = async (userMessage) => {
+    // Predefined responses based on keywords
+    const responses = {
+      skills: "Muhammad Taha is skilled in React.js, Node.js, JavaScript, TypeScript, Python, and various modern web technologies. He's particularly strong in frontend development and UI/UX design.",
+      experience: "Muhammad Taha has experience in full-stack development, having worked on various projects including healthcare applications, business intelligence tools, and web applications.",
+      projects: "Some notable projects include CareSync (a healthcare management system), Pharmytics (a pharmacy analytics platform), and several other web applications showcasing his full-stack capabilities.",
+      education: "Muhammad Taha has a strong educational background in computer science and continues to stay updated with modern technologies and best practices.",
+      contact: "You can reach Muhammad Taha through LinkedIn or via the contact form on this portfolio. Would you like me to share the direct links?",
+      default: "I'd be happy to tell you more about Muhammad Taha's skills, experience, projects, or how to get in touch with him. What specific aspect would you like to know about?"
+    };
+
+    // Simple keyword matching
+    const message = userMessage.toLowerCase();
+    let response = responses.default;
+
+    if (message.includes('skill') || message.includes('tech') || message.includes('stack')) {
+      response = responses.skills;
+    } else if (message.includes('experience') || message.includes('work')) {
+      response = responses.experience;
+    } else if (message.includes('project') || message.includes('portfolio')) {
+      response = responses.projects;
+    } else if (message.includes('education') || message.includes('study')) {
+      response = responses.education;
+    } else if (message.includes('contact') || message.includes('reach') || message.includes('email')) {
+      response = responses.contact;
+    }
+
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    return response;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!inputValue.trim()) return;
+
+    // Add user message
+    const userMessage = { text: inputValue, isUser: true };
+    setMessages(prev => [...prev, userMessage]);
+    setInputValue('');
+    setIsTyping(true);
+
+    try {
+      // Get AI response
+      const response = await generateAIResponse(inputValue);
+      setIsTyping(false);
+      setMessages(prev => [...prev, { text: response, isUser: false }]);
+    } catch (error) {
+      setIsTyping(false);
+      setMessages(prev => [...prev, { 
+        text: "I apologize, but I'm having trouble connecting right now. Please try again later.", 
+        isUser: false 
+      }]);
+    }
+  };
+
   return (
-    <ChatContainer>
-      {!isOpen && (
-        <ChatButton onClick={() => setIsOpen(true)}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            width="24"
-            height="24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
-            />
-          </svg>
-        </ChatButton>
-      )}
+    <>
+      <AnnouncementModal 
+        isOpen={showAnnouncement}
+        onClose={handleCloseAnnouncement}
+        onTryIt={handleTryIt}
+      />
       
-      {isOpen && (
-        <ChatWindow>
-          <ChatHeader>
-            <span>Portfolio Assistant</span>
-            <button
-              onClick={() => setIsOpen(false)}
-              style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer' }}
+      <ChatbotContainer>
+        <AnimatePresence>
+          {isOpen && (
+            <ChatWindow
+              initial={{ opacity: 0, scale: 0.8, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.8, y: 20 }}
+              transition={{ duration: 0.3 }}
             >
-              ✕
-            </button>
-          </ChatHeader>
-          
-          <ChatMessages>
-            {messages.map((message, index) => (
-              <Message key={index} isUser={message.isUser}>
-                {message.text}
-              </Message>
-            ))}
-            <div ref={messagesEndRef} />
-          </ChatMessages>
-          
-          <InputContainer>
-            <Input
-              type="text"
-              placeholder="Type your message..."
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyPress={handleKeyPress}
-            />
-            <SendButton
-              onClick={handleSendMessage}
-              disabled={!inputValue.trim()}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+              <ChatHeader>
+                <h3>Portfolio Assistant</h3>
+                <button onClick={() => setIsOpen(false)}>
+                  <FaTimes />
+                </button>
+              </ChatHeader>
+
+              <ChatMessages>
+                {messages.map((message, index) => (
+                  <Message
+                    key={index}
+                    isUser={message.isUser}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {message.text}
+                  </Message>
+                ))}
+                
+                {isTyping && (
+                  <TypingIndicator
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  >
+                    {[...Array(3)].map((_, i) => (
+                      <motion.span
+                        key={i}
+                        animate={{ y: [0, -5, 0] }}
+                        transition={{
+                          duration: 0.6,
+                          repeat: Infinity,
+                          delay: i * 0.2
+                        }}
+                      />
+                    ))}
+                  </TypingIndicator>
+                )}
+                <div ref={messagesEndRef} />
+              </ChatMessages>
+
+              <InputArea onSubmit={handleSubmit}>
+                <Input
+                  type="text"
+                  placeholder="Type your message..."
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
                 />
-              </svg>
-            </SendButton>
-          </InputContainer>
-        </ChatWindow>
-      )}
-    </ChatContainer>
+                <SendButton type="submit" disabled={!inputValue.trim() || isTyping}>
+                  <FaPaperPlane size={16} />
+                </SendButton>
+              </InputArea>
+            </ChatWindow>
+          )}
+        </AnimatePresence>
+
+        <ChatButton
+          onClick={() => setIsOpen(!isOpen)}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+        >
+          <FaRobot size={24} />
+        </ChatButton>
+      </ChatbotContainer>
+    </>
   );
 };
 
-export default ChatbotComponent; 
+export default Chatbot; 
