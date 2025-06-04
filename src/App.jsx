@@ -6,6 +6,7 @@ import Projects from "./components/Projects";
 import Testimonials from "./components/Testimonials";
 import Hireme from "./components/Hireme";
 import Contact from "./components/Contact";
+import Chatbot from "./components/Chatbot";
 import { useEffect } from "react";
 import Aos from "aos";
 import "aos/dist/aos.css";
@@ -22,13 +23,13 @@ const App = () => {
 		<div className="">
 			<Navbar />
 			<Hero />
-			<Chatbot />
 			<Skills />
 			<Service />
 			<Projects />
 			<Testimonials />
 			<Hireme />
 			<Contact />
+			<Chatbot />
 			<footer className="p-3 text-center">
 				<h6 className="mb-3">Muhammad Taha</h6>
 				<p>Drdragon313 © All CopyRights Reserved 2025</p>
