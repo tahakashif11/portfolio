@@ -208,7 +208,9 @@ const AnnouncementModal = ({ isOpen, onClose, onTryIt }) => {
                 "Real-time skill & experience insights",
                 "Smart project navigation",
                 "Interactive portfolio exploration",
-                "Instant answers to your questions"
+                "Instant answers to your questions",
+                "Voice Assistant"
+
               ].map((feature, index) => (
                 <Feature
                   key={index}

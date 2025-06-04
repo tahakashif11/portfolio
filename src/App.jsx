@@ -8,6 +8,7 @@ import Hireme from "./components/Hireme";
 import Contact from "./components/Contact";
 import Chatbot from "./components/Chatbot";
 import ThemeToggle from "./components/ThemeToggle";
+import VoiceAssistant from "./components/VoiceAssistant";
 import { useEffect } from "react";
 import Aos from "aos";
 import "aos/dist/aos.css";
@@ -32,6 +33,7 @@ const App = () => {
 			<Hireme />
 			<Contact />
 			<Chatbot />
+			<VoiceAssistant />
 			<footer className="p-3 text-center">
 				<h6 className="mb-3">Muhammad Taha</h6>
 				<p>Tbearers © All CopyRights Reserved 2025</p>

@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaRobot, FaTimes, FaPaperPlane } from 'react-icons/fa';
+import { aiService } from '../services/aiService';
+import { ANIMATION_VARIANTS } from '../constants';
 import AnnouncementModal from './AnnouncementModal';
 
 const ChatbotContainer = styled(motion.div)`
@@ -234,18 +236,19 @@ const TypingIndicator = styled(motion.div)`
 
 const initialMessages = [
   {
-    text: "Hi! I'm Muhammad Taha's AI assistant. I can tell you about his skills, experience, and projects. What would you like to know?",
-    isUser: false
+    type: 'bot',
+    content: "Hi! I'm your portfolio assistant. How can I help you today?"
   }
 ];
 
 const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState(initialMessages);
-  const [inputValue, setInputValue] = useState('');
+  const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [showAnnouncement, setShowAnnouncement] = useState(false);
   const messagesEndRef = useRef(null);
+  const inputRef = useRef(null);
 
   useEffect(() => {
     // Check if this is the first visit
@@ -277,58 +280,39 @@ const Chatbot = () => {
     scrollToBottom();
   }, [messages]);
 
-  const generateAIResponse = async (userMessage) => {
-    // Predefined responses based on keywords
-    const responses = {
-      skills: "Muhammad Taha is skilled in React.js, Node.js, JavaScript, TypeScript, Python, and various modern web technologies. He's particularly strong in frontend development and UI/UX design.",
-      experience: "Muhammad Taha has experience in full-stack development, having worked on various projects including healthcare applications, business intelligence tools, and web applications.",
-      projects: "Some notable projects include CareSync (a healthcare management system), Pharmytics (a pharmacy analytics platform), and several other web applications showcasing his full-stack capabilities.",
-      education: "Muhammad Taha has a strong educational background in computer science and continues to stay updated with modern technologies and best practices.",
-      contact: "You can reach Muhammad Taha through LinkedIn or via the contact form on this portfolio. Would you like me to share the direct links?",
-      default: "I'd be happy to tell you more about Muhammad Taha's skills, experience, projects, or how to get in touch with him. What specific aspect would you like to know about?"
-    };
-
-    // Simple keyword matching
-    const message = userMessage.toLowerCase();
-    let response = responses.default;
-
-    if (message.includes('skill') || message.includes('tech') || message.includes('stack')) {
-      response = responses.skills;
-    } else if (message.includes('experience') || message.includes('work')) {
-      response = responses.experience;
-    } else if (message.includes('project') || message.includes('portfolio')) {
-      response = responses.projects;
-    } else if (message.includes('education') || message.includes('study')) {
-      response = responses.education;
-    } else if (message.includes('contact') || message.includes('reach') || message.includes('email')) {
-      response = responses.contact;
+  useEffect(() => {
+    if (isOpen) {
+      inputRef.current?.focus();
     }
-
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    return response;
-  };
+  }, [isOpen]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!inputValue.trim()) return;
+    if (!inputMessage.trim()) return;
 
     // Add user message
-    const userMessage = { text: inputValue, isUser: true };
+    const userMessage = {
+      type: 'user',
+      content: inputMessage.trim()
+    };
+
     setMessages(prev => [...prev, userMessage]);
-    setInputValue('');
+    setInputMessage('');
     setIsTyping(true);
 
     try {
       // Get AI response
-      const response = await generateAIResponse(inputValue);
+      const response = aiService.generateResponse(userMessage.content);
       setIsTyping(false);
-      setMessages(prev => [...prev, { text: response, isUser: false }]);
+      setMessages(prev => [...prev, {
+        type: 'bot',
+        content: response
+      }]);
     } catch (error) {
       setIsTyping(false);
       setMessages(prev => [...prev, { 
-        text: "I apologize, but I'm having trouble connecting right now. Please try again later.", 
-        isUser: false 
+        type: 'bot',
+        content: "I apologize, but I'm having trouble connecting right now. Please try again later."
       }]);
     }
   };
@@ -361,12 +345,12 @@ const Chatbot = () => {
                 {messages.map((message, index) => (
                   <Message
                     key={index}
-                    isUser={message.isUser}
+                    isUser={message.type === 'user'}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3 }}
                   >
-                    {message.text}
+                    {message.content}
                   </Message>
                 ))}
                 
@@ -394,12 +378,13 @@ const Chatbot = () => {
 
               <InputArea onSubmit={handleSubmit}>
                 <Input
+                  ref={inputRef}
                   type="text"
                   placeholder="Type your message..."
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
+                  value={inputMessage}
+                  onChange={(e) => setInputMessage(e.target.value)}
                 />
-                <SendButton type="submit" disabled={!inputValue.trim() || isTyping}>
+                <SendButton type="submit" disabled={!inputMessage.trim() || isTyping}>
                   <FaPaperPlane size={16} />
                 </SendButton>
               </InputArea>
@@ -411,6 +396,7 @@ const Chatbot = () => {
           onClick={() => setIsOpen(!isOpen)}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
+          {...ANIMATION_VARIANTS.scaleIn}
         >
           <FaRobot size={24} />
         </ChatButton>
