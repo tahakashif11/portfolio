@@ -34,7 +34,7 @@ const App = () => {
 			<Chatbot />
 			<footer className="p-3 text-center">
 				<h6 className="mb-3">Muhammad Taha</h6>
-				<p>Drdragon313 © All CopyRights Reserved 2025</p>
+				<p>Tbearers © All CopyRights Reserved 2025</p>
 			</footer>
 		</div>
 	);
